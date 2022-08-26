@@ -30,34 +30,54 @@ module MyEnumerable
   def max(n=nil, &block)
     n ? get_max_values(n, &block) : get_max_value(list, &block)      
   end
+  
+  def min(n=nil, &block)
+    n ? get_min_values(n, &block) : get_min_value(list, &block)      
+  end
 
   private
-
-  def get_max(list, &max_test)
-    max = list[0]
-
-    list.each do |element|  
-      max = element if max_test.call(element, max)
-    end
-    max
-  end
 
   def get_max_value(list)
     max_test = block_given? ? 
       lambda { |x, y| yield(x, y) == 1 } : 
       lambda { |x, y| x > y }
 
-    get_max(list, &max_test)
+    get_min_max(list, &max_test)
+  end
+
+  def get_min_value(list)
+    min_test = block_given? ? 
+      lambda { |x, y| yield(x, y) == -1 } : 
+      lambda { |x, y| x < y }
+
+    get_min_max(list, &min_test)
   end
 
   def get_max_values(n, &block)
-    tmp_list = list
+    get_min_max_values(n, method(:get_max_value), &block)
+  end
+
+  def get_min_values(n, &block)
+    get_min_max_values(n, method(:get_min_value), &block)
+  end
+
+  def get_min_max(list, &min_max_test)
+    min_max = list[0]
+
+    list.each do |element|  
+      min_max = element if min_max_test.call(element, min_max)
+    end
+    min_max
+  end
+
+  def get_min_max_values(n, min_max_func, &block)
+    tmp_list = list.clone
     result = []
 
     n.times do
-      max = get_max_value(tmp_list, &block)
-      tmp_list.delete_at(tmp_list.find_index(max))
-      result << max
+      min_max = min_max_func.call(tmp_list, &block)
+      tmp_list.delete_at(tmp_list.find_index(min_max))
+      result << min_max
     end
     result
   end

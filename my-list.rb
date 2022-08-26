@@ -38,3 +38,10 @@ p a.max(5)
 b = MyList.new('albatross', 'dog', 'horse', 'eagle', 'buffalo')
 puts b.max {|a, b| a.length <=> b.length}
 p b.max(2) {|a, b| a.length <=> b.length}
+
+puts "Testing min"
+puts a.min
+p a.min(5)
+
+puts b.min {|a, b| a.length <=> b.length}
+p b.min(2) {|a, b| a.length <=> b.length}
